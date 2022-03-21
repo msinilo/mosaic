@@ -348,14 +348,10 @@ func build_octree(searchDir string) OctreeNode {
 		}
 	}
 
-	// Test
-	//[122 144 160]
-	//[88 102 38
-
-	test_color := Color{R: 122, G: 144, B: 160}
-	matches := make([]Entry, 0)
-	root.find_closest_match(&test_color, 1, &matches)
-	fmt.Println("Found", matches[0].FileName, matches[0].AvgColor)
+	/*	test_color := Color{R: 122, G: 144, B: 160}
+		matches := make([]Entry, 0)
+		root.find_closest_match(&test_color, 1, &matches)
+		fmt.Println("Found", matches[0].FileName, matches[0].AvgColor)*/
 
 	return root
 }
@@ -364,7 +360,6 @@ func save_octree(file_name string, root *OctreeNode) {
 	var buf bytes.Buffer
 	enc := gob.NewEncoder(&buf)
 	enc.Encode(root)
-	//enc.Encode(root.Children[0]);
 	fmt.Println(buf.Len())
 
 	err := ioutil.WriteFile(file_name, buf.Bytes(), 0644)
@@ -659,7 +654,9 @@ func build_mosaic() {
 
 	fmt.Println("Mosaic took", time.Since(start_time))
 
+	start_time = time.Now()
 	save_image(*out_file, mosaic_img)
+	fmt.Println("Save image took", time.Since(start_time))
 }
 
 func print_flag(f *flag.Flag) {

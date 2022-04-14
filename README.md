@@ -22,3 +22,16 @@ Command-line options (option - default value - description):
 * use_octree - false - If false, just pick a random image for blocks. Only makes sense with a low blend factor
 
 If you'd like to use octree, we have to build it first. Minimum set of arguments for that is rebuild_octree + dir. App will scan the directory and all sub directories and build an octree containing average colors for each picture. Keep in mind some images might not have a clear "dominant" color, you can use max_color_stdev to reject ones that have too much variety. Please note it needs to load each image so process can take some time for directories with thousands of entries.
+
+As I mentioned, my original vision was to simply pick imagas that have their "average" color the closes to the block we're processing, but turned out that in practice it doesn't work so great:
+* if the source image has big block of same color, they'll be replaced by the same "best matching" image, which is a bit repetitive and doesn't look great. It can be countered to some extent by allowing for bigger tolerance (match_tolerance) and bigger number of matches (max_matches)
+* some colors might simply not have a good match (e.g. bright red), depending on you collection
+* it's _slow_ ... for my default settings (~2kx2k source image, downscale of 4) it needs to load 12k+ JPGs
+
+An example created using this method:
+![Method 1](mosaic1.jpg)
+
+For these reasons I decided to also experiment with a different approach - simply load (and cache) N random images and blend the crap out of them (low blend_factor). It is much faster (although depends on N obviously) and it looks good enough IMO.
+
+Method 2 (3000 cached images):
+![Method 2](mosaic2.jpg)
